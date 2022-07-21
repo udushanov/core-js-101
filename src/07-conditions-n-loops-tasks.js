@@ -135,8 +135,22 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  const bol = true;
+  const left1 = rect1.left;
+  const right1 = rect1.left + rect1.width;
+  const left2 = rect2.left;
+  const right2 = rect2.left + rect2.width;
+
+  const top1 = rect1.top;
+  const bottom1 = rect1.top + rect1.height;
+  const top2 = rect2.top;
+  const bottom2 = rect1.top + rect1.height;
+
+  if (left1 > right2 || left2 > right1 || top1 > bottom2 || top2 > bottom1) {
+    return false;
+  }
+  return bol;
 }
 
 
@@ -166,8 +180,11 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(circle, point) {
+  if (circle.radius ** 2 > ((point.x - circle.center.x) ** 2 + (point.y - circle.center.y) ** 2)) {
+    return true;
+  }
+  return false;
 }
 
 
@@ -413,8 +430,26 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let count = 1;
+  let newArr = [];
+  let secArr = [];
+  function finder(arr) {
+    newArr = [];
+    secArr = [];
+    arr.map((el) => newArr.push(el.slice(0, count)));
+    arr.map((el) => secArr.push(el.slice(0, count + 1)));
+    count += 1;
+    if (newArr.every((el) => el === newArr[0]) && !secArr.every((el) => el === secArr[0])) {
+      return newArr;
+    }
+    return finder(arr);
+  }
+  if (!pathes.every((el) => el[0] === pathes[0][0])) {
+    return '';
+  }
+  const newStr = finder(pathes)[0];
+  return newStr.slice(0, newStr.lastIndexOf('/') + 1);
 }
 
 
@@ -436,8 +471,22 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const rowsA = m1.length;
+  const colsA = m1[0].length;
+  const rowsB = m2.length;
+  const colsB = m2[0].length;
+  const C = [];
+  if (colsA !== rowsB) return false;
+  for (let i = 0; i < rowsA; i += 1) C[i] = [];
+  for (let k = 0; k < colsB; k += 1) {
+    for (let i = 0; i < rowsA; i += 1) {
+      let t = 0;
+      for (let j = 0; j < rowsB; j += 1) t += m1[i][j] * m2[j][k];
+      C[i][k] = t;
+    }
+  }
+  return C;
 }
 
 
@@ -471,8 +520,26 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const inverseArr = [[], [], [], [], [], [], [], []];
+  let winner;
+  position.forEach((el, i) => {
+    inverseArr[6].push(position[i][i]);
+    inverseArr[7].push(position[i][position.length - i - 1]);
+    el.forEach((el2, j) => {
+      inverseArr[i].push(position[j][i]);
+      inverseArr[i + 3].push(position[i][j]);
+    });
+  });
+  inverseArr.forEach((el) => {
+    if (el.reduce((a, b) => a + b) === 'XXX') {
+      winner = 'X';
+    }
+    if (el.reduce((a, b) => a + b) === '000') {
+      winner = '0';
+    }
+  });
+  return winner;
 }
 
 
